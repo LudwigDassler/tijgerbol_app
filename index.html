@@ -180,7 +180,7 @@
     alert(bonusEarned > 0 ? `+${bonusEarned} бонусов (5% от ${amount}₽)` : `⚠️ Бонусы только на кофе и фирменные напитки`);
   }
 
-  async function redeemBonus(int amount) {
+  async function redeemBonus(amount) {
     if (currentBonus >= amount) {
       currentBonus -= amount;
       await saveUserToCloud({ phone: currentPhone, name: currentUser?.name || 'Гость', bonus: currentBonus, spent: currentSpent, nickname: currentNickname, avatar: currentAvatar, photo: currentPhoto });
