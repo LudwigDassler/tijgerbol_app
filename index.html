@@ -66,11 +66,9 @@
 </div>
 
 <script>
-  // ========== SUPABASE НАСТРОЙКИ ==========
   const SUPABASE_URL = 'https://iisgrrjkxryteofebutu.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlpc2dycmpreHJ5dGVvZmVidXR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4MzM1MjMsImV4cCI6MjA5MTQwOTUyM30.RfdjJuUvpqY0ML0SKcxfZs4PyjUo0zm5oA0i6OntCvU';
   
-  // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
   let currentUser = null;
   let currentPhone = '';
   let currentBonus = 0;
@@ -182,7 +180,7 @@
     alert(bonusEarned > 0 ? `+${bonusEarned} бонусов (5% от ${amount}₽)` : `⚠️ Бонусы только на кофе и фирменные напитки`);
   }
 
-  async function redeemBonus(amount) {
+  async function redeemBonus(int amount) {
     if (currentBonus >= amount) {
       currentBonus -= amount;
       await saveUserToCloud({ phone: currentPhone, name: currentUser?.name || 'Гость', bonus: currentBonus, spent: currentSpent, nickname: currentNickname, avatar: currentAvatar, photo: currentPhoto });
@@ -364,6 +362,12 @@
           <div class="stat-row"><span><i class="fas fa-gem"></i> Всего бонусов</span><strong>${currentBonus}</strong></div>
           <div class="stat-row"><span><i class="fas fa-shopping-bag"></i> Всего потрачено</span><strong>${currentSpent}₽</strong></div>
           <div class="stat-row"><span><i class="fas fa-chart-line"></i> Уровень</span><strong>${getLevel()}</strong></div>
+        </div>
+        <div class="card text-center">
+          <h3 style="margin-bottom:12px;">Мы в соцсетях</h3>
+          <a href="https://vk.com/tijgerbol" target="_blank" style="color:#B8860B; text-decoration:none; font-size:16px; display:inline-flex; align-items:center; gap:8px;">
+            <i class="fab fa-vk"></i> ВКонтакте
+          </a>
         </div>
       </div>
     `;
