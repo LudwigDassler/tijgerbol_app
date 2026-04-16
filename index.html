@@ -49,7 +49,7 @@
 <body>
 <div class="overlay">
     <div class="tabs" id="tabs" style="display: none;">
-        <div class="tab active" onclick="switchTab(0)"><i class="fas fa-mug-hot"></i> <button class="btn-outline" onclick="showAmountPicker('coffee')"><i class="fas fa-mug-hot"></i> ☕ Кофе<span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button></div>
+        <div class="tab active" onclick="switchTab(0)"><i class="fas fa-mug-hot"></i> Кофе</div>
         <div class="tab" onclick="switchTab(1)"><i class="fas fa-user-circle"></i> Профиль</div>
         <div class="tab" onclick="switchTab(2)"><i class="fas fa-clock-rotate-left"></i> История</div>
     </div>
@@ -151,7 +151,7 @@ async function addPurchase(amount, category) {
     if (amount <= 0) return;
     let isDrink = (category === 'coffee' || category === 'bakery');
     let bonusEarned = isDrink ? Math.floor(amount * 0.05) : 0;
-    let categoryName = category === 'coffee' ? '<button class="btn-outline" onclick="showAmountPicker('coffee')"><i class="fas fa-mug-hot"></i> ☕ Кофе<span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button>' : category === 'bakery' ? '<button class="btn-outline" onclick="showAmountPicker('bakery')"><i class="fas fa-croissant"></i> 🥐 Фирменный<span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button> напиток' : '<button class="btn-outline" onclick="showAmountPicker('other')"><i class="fas fa-utensils"></i> 🍽️ Другое<span style="margin-left:auto; background:#999; padding:2px 8px; border-radius:20px; font-size:11px;">0%</span></button>';
+    let categoryName = category === 'coffee' ? 'Кофе' : category === 'bakery' ? 'Фирменный напиток' : 'Другое';
     let icon = category === 'coffee' ? '☕' : category === 'bakery' ? '🥐' : '🍽️';
     
     currentBonus += bonusEarned;
@@ -246,15 +246,15 @@ function renderPurchaseTab() {
                 <h3>Симуляция покупки</h3>
                 <span class="promo-badge">5%</span>
             </div>
-            <div style="display:grid; gap:10px;">
-                <button class="btn-outline" onclick="showAmountPicker('coffee')"><i class="fas fa-coffee"></i> <button class="btn-outline" onclick="showAmountPicker('coffee')"><i class="fas fa-mug-hot"></i> ☕ Кофе<span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button></button>
-                <button class="btn-outline" onclick="showAmountPicker('bakery')"><i class="fas fa-croissant"></i> <button class="btn-outline" onclick="showAmountPicker('bakery')"><i class="fas fa-croissant"></i> 🥐 Фирменный<span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button></button>
-                <button class="btn-outline" onclick="showAmountPicker('other')"><i class="fas fa-utensils"></i> <button class="btn-outline" onclick="showAmountPicker('other')"><i class="fas fa-utensils"></i> 🍽️ Другое<span style="margin-left:auto; background:#999; padding:2px 8px; border-radius:20px; font-size:11px;">0%</span></button></button>
+            <div class="row">
+                <button class="btn-outline" onclick="showAmountPicker('coffee')"><i class="fas fa-mug-hot"></i> ☕ Кофе <span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button>
+                <button class="btn-outline" onclick="showAmountPicker('bakery')"><i class="fas fa-croissant"></i> 🥐 Фирменный <span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button>
+                <button class="btn-outline" onclick="showAmountPicker('other')"><i class="fas fa-utensils"></i> 🍽️ Другое <span style="margin-left:auto; background:#999; padding:2px 8px; border-radius:20px; font-size:11px;">0%</span></button>
             </div>
         </div>
         <div class="card">
             <h3>Списание бонусов</h3>
-            <div style="display:grid; gap:10px;">
+            <div class="row">
                 <button class="btn-secondary" onclick="redeemBonus(50)">Списать 50</button>
                 <button class="btn-secondary" onclick="redeemBonus(100)">Списать 100</button>
             </div>
@@ -264,7 +264,7 @@ function renderPurchaseTab() {
 }
 
 function showAmountPicker(category) {
-    let categoryName = category === 'coffee' ? '<button class="btn-outline" onclick="showAmountPicker('coffee')"><i class="fas fa-mug-hot"></i> ☕ Кофе<span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button>' : category === 'bakery' ? '<button class="btn-outline" onclick="showAmountPicker('bakery')"><i class="fas fa-croissant"></i> 🥐 Фирменный<span style="margin-left:auto; background:#B8860B; padding:2px 8px; border-radius:20px; font-size:11px;">+5%</span></button> напиток' : '<button class="btn-outline" onclick="showAmountPicker('other')"><i class="fas fa-utensils"></i> 🍽️ Другое<span style="margin-left:auto; background:#999; padding:2px 8px; border-radius:20px; font-size:11px;">0%</span></button>';
+    let categoryName = category === 'coffee' ? 'Кофе' : category === 'bakery' ? 'Фирменный напиток' : 'Другое';
     let icon = category === 'coffee' ? '☕' : category === 'bakery' ? '🥐' : '🍽️';
     let amounts = [200, 500, 1000, 1500];
     let buttons = amounts.map(a => `<button class="btn-outline" onclick="addPurchase(${a}, '${category}')">${a}₽</button>`).join('');
@@ -286,22 +286,21 @@ function renderProfileTab() {
     let avatars = ['fa-user', 'fa-star', 'fa-fire', 'fa-crown', 'fa-bolt', 'fa-diamond', 'fa-leaf', 'fa-heart'];
     let avatarsHtml = avatars.map(a => `<div class="avatar-option ${currentAvatar === a ? 'selected' : ''}" onclick="selectAvatar('${a}')"><i class="fas ${a}"></i></div>`).join('');
     
+    let avatarHtml = currentPhoto && currentPhoto.startsWith('data:image') 
+        ? `<img src="${currentPhoto}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`
+        : `<i class="fas ${currentAvatar}" style="font-size:44px;"></i>`;
+    
     let html = `
         <div class="container">
             <div class="card">
-                <div class="avatar-large"><i class="fas ${currentAvatar}" style="font-size:44px;"></i></div>
-            <button onclick="uploadAvatar()" class="btn-outline" style="margin-top:8px; padding:8px; font-size:12px;"><i class="fas fa-upload"></i> Загрузить фото</button>
+                <div class="avatar-large">${avatarHtml}</div>
+                <button onclick="uploadAvatar()" class="btn-outline" style="margin-top:8px; padding:8px; font-size:12px;"><i class="fas fa-upload"></i> Загрузить фото</button>
                 <div class="text-center">
                     <h2>${currentNickname}</h2>
                     <p class="text-muted">${currentPhone}</p>
                 </div>
             </div>
             <div class="card text-center">
-        <div class="card text-center">
-            <button onclick="shareApp()" style="background:#B8860B;">
-                <i class="fas fa-share-alt"></i> Поделиться приложением
-            </button>
-        </div>
                 <h3>Ваш QR-код</h3>
                 <div class="qr-code">
                     <i class="fas fa-qrcode" style="font-size:64px; color:#B8860B;"></i>
@@ -314,6 +313,9 @@ function renderProfileTab() {
                 <div class="avatar-selector">${avatarsHtml}</div>
                 <button onclick="saveProfile()">Сохранить</button>
             </div>
+            <div class="card text-center">
+                <button onclick="shareApp()" style="background:#B8860B;"><i class="fas fa-share-alt"></i> Поделиться приложением</button>
+            </div>
             <div class="card">
                 <h3>Статистика</h3>
                 <div class="stat-row"><span>Всего бонусов</span><strong>${currentBonus}</strong></div>
@@ -321,11 +323,6 @@ function renderProfileTab() {
                 <div class="stat-row"><span>Уровень</span><strong>${getLevel()}</strong></div>
             </div>
             <div class="card text-center">
-        <div class="card text-center">
-            <button onclick="shareApp()" style="background:#B8860B;">
-                <i class="fas fa-share-alt"></i> Поделиться приложением
-            </button>
-        </div>
                 <h3>Мы в соцсетях</h3>
                 <a href="https://vk.com/tijgerbol" target="_blank" style="color:#B8860B;"><i class="fab fa-vk"></i> ВКонтакте</a>
             </div>
@@ -390,21 +387,6 @@ function renderLoginScreen() {
     document.getElementById('login-screen').innerHTML = loginHtml;
 }
 
-renderLoginScreen();
-</script>
-</body>
-</html>
-<script>
-function shareApp() {
-    if (navigator.share) {
-        navigator.share({ title: 'Tijgerbol', text: 'Бонусная программа кофейни', url: window.location.href });
-    } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert('🔗 Ссылка скопирована!');
-    }
-}
-</script>
-<script>
 async function uploadAvatar() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -425,12 +407,16 @@ async function uploadAvatar() {
     input.click();
 }
 
-// Обновляем отображение аватарки (фото или иконка)
-function renderAvatar() {
-    if (currentPhoto && currentPhoto.startsWith('data:image')) {
-        return `<img src="${currentPhoto}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+function shareApp() {
+    if (navigator.share) {
+        navigator.share({ title: 'Tijgerbol', text: 'Бонусная программа кофейни', url: window.location.href });
     } else {
-        return `<i class="fas ${currentAvatar}" style="font-size:44px;"></i>`;
+        navigator.clipboard.writeText(window.location.href);
+        alert('🔗 Ссылка скопирована!');
     }
 }
+
+renderLoginScreen();
 </script>
+</body>
+</html>
