@@ -7,6 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+    /* Стили для корзины */
+    .cart-btn { position: fixed; bottom: 20px; right: 20px; background: #B8860B; color: white; border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s; }
+    .cart-btn:hover { transform: scale(1.05); }
+    .cart-count { position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; display: none; align-items: center; justify-content: center; }
+    .menu-category { display: flex; justify-content: space-between; align-items: center; padding: 12px; margin: 8px 0; background: #f8f9fa; border-radius: 16px; cursor: pointer; transition: all 0.2s; }
+    .menu-category:hover { background: #fff8f0; transform: translateX(5px); }
+    .menu-category i { font-size: 24px; width: 40px; }
+    .submenu { margin-left: 20px; margin-top: 8px; display: none; }
+    .submenu.active { display: block; }
+    .submenu-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin: 4px 0; background: #fff; border-radius: 12px; cursor: pointer; }
+    .submenu-item:hover { background: #fff8f0; }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: url('background.jpg') center/cover fixed; min-height: 100vh; color: #1A1A1A; }
         .overlay { background: rgba(0, 0, 0, 0.55); min-height: 100vh; padding: 20px 0 40px; }
@@ -48,6 +60,10 @@
 </head>
 <body>
 <div class="overlay">
+    <div id="cartBtn" class="cart-btn">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cartCount" class="cart-count">0</span>
+    </div>
     <div class="tabs" id="tabs" style="display: none;">
         <div class="tab active" onclick="switchTab(0)"><i class="fas fa-mug-hot"></i> Кофе</div>
         <div class="tab" onclick="switchTab(1)"><i class="fas fa-user-circle"></i> Профиль</div>
@@ -595,4 +611,281 @@ window.showAmountPicker = function(category) {
         }
     }
 };
+</script>
+<script>
+// ========== КОРЗИНА ==========
+let cart = [];
+let cartTotal = 0;
+let cartBonus = 0;
+
+function updateCartUI() {
+    const countSpan = document.getElementById('cartCount');
+    if (cart.length > 0) {
+        countSpan.style.display = 'flex';
+        countSpan.textContent = cart.length;
+    } else {
+        countSpan.style.display = 'none';
+    }
+}
+
+function addToCart(item) {
+    cart.push(item);
+    cartTotal += item.price;
+    cartBonus += item.bonus;
+    updateCartUI();
+    showToast(`✅ ${item.name} добавлен в корзину (+${item.bonus} бонусов)`);
+}
+
+function showCartModal() {
+    if (cart.length === 0) {
+        showToast('🛒 Корзина пуста');
+        return;
+    }
+    
+    let cartHtml = `
+        <div id="cartModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; align-items:center; justify-content:center;">
+            <div style="background:white; border-radius:24px; max-width:400px; width:90%; max-height:80%; overflow:auto; padding:20px;">
+                <h3 style="margin-bottom:16px;">🛒 Корзина</h3>
+                <div id="cartItemsList">
+    `;
+    
+    cart.forEach((item, idx) => {
+        cartHtml += `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
+                <div>
+                    <strong>${item.name}</strong><br>
+                    <small>${item.price}₽ | +${item.bonus} бонусов</small>
+                </div>
+                <button onclick="removeFromCart(${idx})" style="background:#e74c3c; width:auto; padding:6px 12px;">🗑️</button>
+            </div>
+        `;
+    });
+    
+    cartHtml += `
+                </div>
+                <div style="margin-top:16px; padding-top:16px; border-top:2px solid #B8860B;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <span>📦 Итого:</span><strong>${cartTotal}₽</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                        <span>🎁 Бонусы:</span><strong style="color:#4CAF50;">+${cartBonus}</strong>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="clearCart()" style="background:#999;">Очистить</button>
+                        <button onclick="checkout()" style="background:#4CAF50;">✅ Оплатить</button>
+                        <button onclick="closeCartModal()" style="background:#666;">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const existingModal = document.getElementById('cartModal');
+    if (existingModal) existingModal.remove();
+    document.body.insertAdjacentHTML('beforeend', cartHtml);
+}
+
+function removeFromCart(index) {
+    cartTotal -= cart[index].price;
+    cartBonus -= cart[index].bonus;
+    cart.splice(index, 1);
+    updateCartUI();
+    showCartModal();
+}
+
+function clearCart() {
+    cart = [];
+    cartTotal = 0;
+    cartBonus = 0;
+    updateCartUI();
+    closeCartModal();
+    showToast('Корзина очищена');
+}
+
+function closeCartModal() {
+    const modal = document.getElementById('cartModal');
+    if (modal) modal.remove();
+}
+
+async function checkout() {
+    if (cart.length === 0) {
+        showToast('Корзина пуста');
+        return;
+    }
+    
+    currentBonus += cartBonus;
+    currentSpent += cartTotal;
+    
+    await saveUserToCloud({ 
+        phone: currentPhone, 
+        name: currentUser?.name || 'Гость', 
+        bonus: currentBonus, 
+        spent: currentSpent, 
+        nickname: currentNickname, 
+        avatar: currentAvatar, 
+        photo: currentPhoto 
+    });
+    
+    const itemsText = cart.map(i => `${i.name}: ${i.price}₽`).join(', ');
+    await addTransactionToCloud(currentPhone, cartBonus, 'add', `🛒 Чек: ${itemsText} → +${cartBonus} бонусов`);
+    
+    transactions.unshift({ 
+        description: `🛒 Чек (${cart.length} позиций): ${cartTotal}₽ → +${cartBonus} бонусов`, 
+        amount: cartBonus, 
+        type: 'add', 
+        created_at: new Date().toISOString() 
+    });
+    
+    cart = [];
+    cartTotal = 0;
+    cartBonus = 0;
+    updateCartUI();
+    closeCartModal();
+    renderCurrentTab();
+    
+    // Telegram уведомление
+    const msg = `🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n🛒 *Заказ оплачен*\n📦 Сумма: ${cartTotal}₽\n🎁 +${cartBonus} бонусов\n📈 Всего: ${currentBonus}\n━━━━━━━━━━━━━━━━━━━━━━━`;
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
+    }).catch(() => {});
+    
+    showToast(`✅ Оплачено ${cartTotal}₽\n🎁 +${cartBonus} бонусов`);
+}
+
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = 'position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:#333; color:white; padding:12px 24px; border-radius:50px; z-index:2001; font-size:14px;';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+}
+
+// ========== МЕНЮ С КАТЕГОРИЯМИ ==========
+const menuData = {
+    coffee: { name: '☕ Кофе', icon: 'fa-mug-hot', items: [
+        { name: 'Эспрессо', price: 150, bonus: 8 },
+        { name: 'Американо', price: 180, bonus: 9 },
+        { name: 'Капучино', price: 220, bonus: 11 },
+        { name: 'Латте', price: 250, bonus: 13 },
+        { name: 'Раф', price: 280, bonus: 14 }
+    ], syrups: true },
+    signature: { name: '🥐 Фирменные напитки', icon: 'fa-crown', items: [
+        { name: 'Тигровый раф', price: 320, bonus: 16 },
+        { name: 'Медовый латте', price: 290, bonus: 15 },
+        { name: 'Кокосовый капучино', price: 310, bonus: 16 },
+        { name: 'Лавандовый раф', price: 340, bonus: 17 }
+    ], syrups: true },
+    cold: { name: '🧊 Холодные напитки', icon: 'fa-glass-water', items: [
+        { name: 'Фраппе', price: 280, bonus: 14 },
+        { name: 'Айс-латте', price: 260, bonus: 13 },
+        { name: 'Лимонад', price: 220, bonus: 11 },
+        { name: 'Смузи', price: 300, bonus: 15 }
+    ], syrups: false },
+    bakery: { name: '🥐 Выпечка', icon: 'fa-bread-slice', items: [
+        { name: 'Круассан', price: 120, bonus: 0 },
+        { name: 'Слойка с вишней', price: 140, bonus: 0 },
+        { name: 'Киш', price: 180, bonus: 0 }
+    ], syrups: false },
+    dessert: { name: '🍰 Десерты', icon: 'fa-cake', items: [
+        { name: 'Чизкейк', price: 220, bonus: 0 },
+        { name: 'Тирамису', price: 250, bonus: 0 },
+        { name: 'Брауни', price: 180, bonus: 0 }
+    ], syrups: false }
+};
+
+const syrups = [
+    { name: 'Ванильный', price: 30, bonus: 2 },
+    { name: 'Карамельный', price: 30, bonus: 2 },
+    { name: 'Шоколадный', price: 30, bonus: 2 },
+    { name: 'Мятный', price: 30, bonus: 2 }
+];
+
+function renderFullMenu() {
+    let html = '<div class="card" style="margin-bottom:16px;"><h3 style="margin-bottom:16px;">🍽️ Меню</h3>';
+    
+    for (const [key, category] of Object.entries(menuData)) {
+        html += `
+            <div class="menu-category" onclick="toggleSubmenu('${key}')">
+                <div><i class="fas ${category.icon}"></i> <strong>${category.name}</strong></div>
+                <div><span class="promo-badge">${category.items[0].bonus > 0 ? '5%' : '0%'}</span> <i class="fas fa-chevron-down"></i></div>
+            </div>
+            <div id="submenu-${key}" class="submenu">
+        `;
+        
+        category.items.forEach(item => {
+            html += `
+                <div class="submenu-item" onclick="event.stopPropagation(); selectItem('${key}', '${item.name}', ${item.price}, ${item.bonus})">
+                    <span>${item.name}</span>
+                    <span><strong>${item.price}₽</strong> <span style="color:#4CAF50;">+${item.bonus}</span></span>
+                </div>
+            `;
+        });
+        
+        if (category.syrups) {
+            html += `<div style="padding:8px 12px; font-size:12px; color:#999;"><i class="fas fa-tint"></i> + сироп (от 30₽)</div>`;
+        }
+        
+        html += `</div>`;
+    }
+    
+    html += '</div>';
+    return html;
+}
+
+function toggleSubmenu(key) {
+    const el = document.getElementById(`submenu-${key}`);
+    if (el) el.classList.toggle('active');
+}
+
+function selectItem(categoryKey, itemName, basePrice, baseBonus) {
+    let totalPrice = basePrice;
+    let totalBonus = baseBonus;
+    let selectedSyrups = [];
+    
+    if (menuData[categoryKey].syrups) {
+        const syrupChoice = confirm(`Добавить сироп к ${itemName}? (+30₽, +2 бонуса)`);
+        if (syrupChoice) {
+            totalPrice += 30;
+            totalBonus += 2;
+            selectedSyrups.push('сироп');
+        }
+    }
+    
+    addToCart({
+        name: itemName + (selectedSyrups.length ? ' + сироп' : ''),
+        price: totalPrice,
+        bonus: totalBonus,
+        category: categoryKey
+    });
+}
+
+// Переопределяем renderPurchaseTab для отображения меню
+const originalRenderPurchaseTab = renderPurchaseTab;
+renderPurchaseTab = function() {
+    let html = `
+        <div class="card balance-card">
+            <div class="balance-label">Мои бонусы</div>
+            <div class="balance-amount">${currentBonus}</div>
+            <div class="balance-label">Всего потрачено: ${currentSpent}₽</div>
+            <div class="balance-sub">Уровень: ${getLevel()}</div>
+        </div>
+        ${renderFullMenu()}
+        <div class="card">
+            <h3>Списание бонусов</h3>
+            <div class="row">
+                <button class="btn-secondary" onclick="redeemBonus(50)">Списать 50</button>
+                <button class="btn-secondary" onclick="redeemBonus(100)">Списать 100</button>
+            </div>
+        </div>
+    `;
+    document.getElementById('app-screen').innerHTML = `<div class="container">${html}</div>`;
+};
+
+// Инициализация корзины после загрузки
+document.addEventListener('DOMContentLoaded', function() {
+    const cartBtn = document.getElementById('cartBtn');
+    if (cartBtn) cartBtn.onclick = showCartModal;
+});
 </script>
