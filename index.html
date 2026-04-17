@@ -270,9 +270,21 @@ function renderPurchaseTab() {
         </div>
         <div class="card">
             <h3>Списание бонусов</h3>
-            <div style="display: grid; gap: 10px;">
-                <button class="btn-secondary" onclick="redeemBonus(50)">Списать 50</button>
-                <button class="btn-secondary" onclick="redeemBonus(100)">Списать 100</button>
+            <div class="row">
+                <input type="number" id="redeemAmount" placeholder="Введите сумму" class="phone-number" style="flex:2;">
+                <button class="btn-secondary" onclick="redeemAnyBonus()" style="flex:1;">Списать</button>
+            </div>
+            <div class="row" style="margin-top:8px;">
+                <button class="btn-outline" onclick="redeemBonus(50)" style="flex:1;">50</button>
+                <button class="btn-outline" onclick="redeemBonus(100)" style="flex:1;">100</button>
+                <button class="btn-outline" onclick="redeemBonus(200)" style="flex:1;">200</button>
+                <button class="btn-outline" onclick="redeemBonus(500)" style="flex:1;">500</button>
+            </div>
+            <div class="row" style="margin-top:8px;">
+                <button class="btn-outline" onclick="redeemBonus(50)" style="flex:1;">50</button>
+                <button class="btn-outline" onclick="redeemBonus(100)" style="flex:1;">100</button>
+                <button class="btn-outline" onclick="redeemBonus(200)" style="flex:1;">200</button>
+                <button class="btn-outline" onclick="redeemBonus(500)" style="flex:1;">500</button>
             </div>
         </div>
     `;
@@ -433,6 +445,29 @@ function shareApp() {
 }
 
 renderLoginScreen();
+function redeemAnyBonus() {
+    const amount = parseInt(document.getElementById("redeemAmount").value);
+    if (isNaN(amount) || amount <= 0) {
+        alert("❌ Введите корректную сумму");
+        return;
+    }
+    if (currentBonus >= amount) {
+        currentBonus -= amount;
+        saveUserToCloud({ phone: currentPhone, name: currentUser?.name || "Гость", bonus: currentBonus, spent: currentSpent, nickname: currentNickname, avatar: currentAvatar, photo: currentPhoto });
+        addTransactionToCloud(currentPhone, -amount, "remove", "Списано ${amount} бонусов");
+        transactions.unshift({ description: "Списано ${amount} бонусов", amount: -amount, type: "remove", created_at: new Date().toISOString() });
+        renderCurrentTab();
+        alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
+        const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
+        }).catch(() => {});
+    } else {
+        alert("❌ Недостаточно бонусов! У вас " + currentBonus);
+    }
+}
+
 </script>
 </body>
 </html>
@@ -523,6 +558,29 @@ window.showAmountPicker = function(category) {
         }
     }
 };
+function redeemAnyBonus() {
+    const amount = parseInt(document.getElementById("redeemAmount").value);
+    if (isNaN(amount) || amount <= 0) {
+        alert("❌ Введите корректную сумму");
+        return;
+    }
+    if (currentBonus >= amount) {
+        currentBonus -= amount;
+        saveUserToCloud({ phone: currentPhone, name: currentUser?.name || "Гость", bonus: currentBonus, spent: currentSpent, nickname: currentNickname, avatar: currentAvatar, photo: currentPhoto });
+        addTransactionToCloud(currentPhone, -amount, "remove", "Списано ${amount} бонусов");
+        transactions.unshift({ description: "Списано ${amount} бонусов", amount: -amount, type: "remove", created_at: new Date().toISOString() });
+        renderCurrentTab();
+        alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
+        const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
+        }).catch(() => {});
+    } else {
+        alert("❌ Недостаточно бонусов! У вас " + currentBonus);
+    }
+}
+
 </script>
 <script>
 // ========== КОРЗИНА ==========
@@ -611,6 +669,29 @@ window.showAmountPicker = function(category) {
         }
     }
 };
+function redeemAnyBonus() {
+    const amount = parseInt(document.getElementById("redeemAmount").value);
+    if (isNaN(amount) || amount <= 0) {
+        alert("❌ Введите корректную сумму");
+        return;
+    }
+    if (currentBonus >= amount) {
+        currentBonus -= amount;
+        saveUserToCloud({ phone: currentPhone, name: currentUser?.name || "Гость", bonus: currentBonus, spent: currentSpent, nickname: currentNickname, avatar: currentAvatar, photo: currentPhoto });
+        addTransactionToCloud(currentPhone, -amount, "remove", "Списано ${amount} бонусов");
+        transactions.unshift({ description: "Списано ${amount} бонусов", amount: -amount, type: "remove", created_at: new Date().toISOString() });
+        renderCurrentTab();
+        alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
+        const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
+        }).catch(() => {});
+    } else {
+        alert("❌ Недостаточно бонусов! У вас " + currentBonus);
+    }
+}
+
 </script>
 <script>
 // ========== КОРЗИНА ==========
@@ -875,8 +956,20 @@ renderPurchaseTab = function() {
         <div class="card">
             <h3>Списание бонусов</h3>
             <div class="row">
-                <button class="btn-secondary" onclick="redeemBonus(50)">Списать 50</button>
-                <button class="btn-secondary" onclick="redeemBonus(100)">Списать 100</button>
+                <input type="number" id="redeemAmount" placeholder="Введите сумму" class="phone-number" style="flex:2;">
+                <button class="btn-secondary" onclick="redeemAnyBonus()" style="flex:1;">Списать</button>
+            </div>
+            <div class="row" style="margin-top:8px;">
+                <button class="btn-outline" onclick="redeemBonus(50)" style="flex:1;">50</button>
+                <button class="btn-outline" onclick="redeemBonus(100)" style="flex:1;">100</button>
+                <button class="btn-outline" onclick="redeemBonus(200)" style="flex:1;">200</button>
+                <button class="btn-outline" onclick="redeemBonus(500)" style="flex:1;">500</button>
+            </div>
+            <div class="row" style="margin-top:8px;">
+                <button class="btn-outline" onclick="redeemBonus(50)" style="flex:1;">50</button>
+                <button class="btn-outline" onclick="redeemBonus(100)" style="flex:1;">100</button>
+                <button class="btn-outline" onclick="redeemBonus(200)" style="flex:1;">200</button>
+                <button class="btn-outline" onclick="redeemBonus(500)" style="flex:1;">500</button>
             </div>
         </div>
     `;
@@ -888,4 +981,75 @@ document.addEventListener('DOMContentLoaded', function() {
     const cartBtn = document.getElementById('cartBtn');
     if (cartBtn) cartBtn.onclick = showCartModal;
 });
+function redeemAnyBonus() {
+    const amount = parseInt(document.getElementById("redeemAmount").value);
+    if (isNaN(amount) || amount <= 0) {
+        alert("❌ Введите корректную сумму");
+        return;
+    }
+    if (currentBonus >= amount) {
+        currentBonus -= amount;
+        saveUserToCloud({ phone: currentPhone, name: currentUser?.name || "Гость", bonus: currentBonus, spent: currentSpent, nickname: currentNickname, avatar: currentAvatar, photo: currentPhoto });
+        addTransactionToCloud(currentPhone, -amount, "remove", "Списано ${amount} бонусов");
+        transactions.unshift({ description: "Списано ${amount} бонусов", amount: -amount, type: "remove", created_at: new Date().toISOString() });
+        renderCurrentTab();
+        alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
+        const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
+        }).catch(() => {});
+    } else {
+        alert("❌ Недостаточно бонусов! У вас " + currentBonus);
+    }
+}
+
+</script>
+<script>
+function redeemAnyBonus() {
+    const amount = parseInt(document.getElementById('redeemAmount').value);
+    if (isNaN(amount) || amount <= 0) {
+        showToast('❌ Введите корректную сумму');
+        return;
+    }
+    if (currentBonus >= amount) {
+        currentBonus -= amount;
+        saveUserToCloud({ phone: currentPhone, name: currentUser?.name || 'Гость', bonus: currentBonus, spent: currentSpent, nickname: currentNickname, avatar: currentAvatar, photo: currentPhoto });
+        addTransactionToCloud(currentPhone, -amount, 'remove', `Списано ${amount} бонусов`);
+        transactions.unshift({ description: `Списано ${amount} бонусов`, amount: -amount, type: 'remove', created_at: new Date().toISOString() });
+        renderCurrentTab();
+        showToast(`✅ Списано ${amount} бонусов! Осталось: ${currentBonus}`);
+        
+        const msg = `🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: ${currentBonus}\n━━━━━━━━━━━━━━━━━━━━━━━`;
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
+        }).catch(() => {});
+    } else {
+        showToast(`❌ Недостаточно бонусов! У вас ${currentBonus}`);
+    }
+}
+function redeemAnyBonus() {
+    const amount = parseInt(document.getElementById("redeemAmount").value);
+    if (isNaN(amount) || amount <= 0) {
+        alert("❌ Введите корректную сумму");
+        return;
+    }
+    if (currentBonus >= amount) {
+        currentBonus -= amount;
+        saveUserToCloud({ phone: currentPhone, name: currentUser?.name || "Гость", bonus: currentBonus, spent: currentSpent, nickname: currentNickname, avatar: currentAvatar, photo: currentPhoto });
+        addTransactionToCloud(currentPhone, -amount, "remove", "Списано ${amount} бонусов");
+        transactions.unshift({ description: "Списано ${amount} бонусов", amount: -amount, type: "remove", created_at: new Date().toISOString() });
+        renderCurrentTab();
+        alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
+        const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
+        }).catch(() => {});
+    } else {
+        alert("❌ Недостаточно бонусов! У вас " + currentBonus);
+    }
+}
+
 </script>
