@@ -313,3 +313,37 @@ document.getElementById('cartBtn').onclick = showCart;
 </script>
 </body>
 </html>
+<script>
+// Функция для добавления товара в корзину из меню
+function addToCartFromMenu(itemName, price, bonusPercent) {
+    let bonus = Math.floor(price * bonusPercent / 100);
+    addToCart({ name: itemName, price: price, bonus: bonus });
+}
+
+// Переопределяем showAmountPicker для добавления в корзину
+const originalShowAmountPicker = window.showAmountPicker;
+window.showAmountPicker = function(category) {
+    let categoryName = category === 'coffee' ? 'Кофе' : category === 'bakery' ? 'Фирменный напиток' : 'Другое';
+    let bonusPercent = (category === 'coffee' || category === 'bakery') ? 5 : 0;
+    let amount = prompt(`💵 ${categoryName}\nБонус: ${bonusPercent}%\n\nВведите сумму чека в рублях:`);
+    if (amount && !isNaN(amount) && amount > 0) {
+        let action = confirm(`Добавить ${categoryName} на ${amount}₽ в корзину?\n\n"OK" - добавить в корзину\n"Отмена" - оплатить сразу`);
+        if (action) {
+            addToCart({ name: categoryName, price: parseInt(amount), bonus: Math.floor(parseInt(amount) * bonusPercent / 100) });
+        } else {
+            addPurchase(parseInt(amount), category);
+        }
+    }
+};
+
+// Обновляем отображение корзины в меню
+const menuItems = document.querySelectorAll('.menu-item');
+menuItems.forEach(item => {
+    item.onclick = function() {
+        let text = this.innerText;
+        if (text.includes('Кофе')) window.showAmountPicker('coffee');
+        else if (text.includes('Фирменные')) window.showAmountPicker('bakery');
+        else window.showAmountPicker('other');
+    };
+});
+</script>
