@@ -83,6 +83,30 @@
         showToast("⚠️ Нет подключения к интернету", "warning");
     });
     </script>
+    <script>
+    // Глобальный обработчик ошибок JavaScript
+    window.onerror = function(msg, url, line, col, error) {
+        console.error("Ошибка:", msg, "в строке", line);
+        showToast("❌ Произошла ошибка, попробуйте позже", "error");
+        return false;
+    };
+    
+    // Обработка ошибок Promise (асинхронных)
+    window.addEventListener("unhandledrejection", function(event) {
+        console.error("Promise ошибка:", event.reason);
+        showToast("❌ Ошибка при загрузке данных", "error");
+    });
+    
+    // Проверка подключения к интернету
+    window.addEventListener("online", function() {
+        showToast("✅ Интернет восстановлен", "success");
+        location.reload();
+    });
+    
+    window.addEventListener("offline", function() {
+        showToast("⚠️ Нет подключения к интернету", "warning");
+    });
+    </script>
 <div class="overlay">
     <div id="cartBtn" class="cart-btn">
         <i class="fas fa-shopping-cart"></i>
@@ -113,7 +137,12 @@ async function loadUserFromCloud(phone) {
             return null;
         }
     try {
-        const r = await fetch(`${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=*`, { signal: AbortSignal.timeout(10000) }, {
+        if (!navigator.onLine) {
+            showToast("⚠️ Нет подключения к интернету", "warning");
+            return null;
+        }
+    try {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/users?phone=eq.${encodeURIComponent(phone)}&select=*`, { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
         const d = await r.json();
@@ -126,7 +155,7 @@ async function saveUserToCloud(user) {
         const existing = await loadUserFromCloud(user.phone);
         const url = `${SUPABASE_URL}/rest/v1/users${existing ? '?phone=eq.'+encodeURIComponent(user.phone) : ''}`;
         const method = existing ? 'PATCH' : 'POST';
-        await fetch(url, { signal: AbortSignal.timeout(10000) }, {
+        await fetch(url, { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             method, headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
             body: JSON.stringify(existing ? { bonus: user.bonus, spent: user.spent, nickname: user.nickname, avatar: user.avatar, photo: user.photo } : user)
         });
@@ -134,7 +163,7 @@ async function saveUserToCloud(user) {
 }
 
 async function addTransactionToCloud(phone, amount, type, desc) {
-    await fetch(`${SUPABASE_URL}/rest/v1/transactions`, { signal: AbortSignal.timeout(10000) }, {
+    await fetch(`${SUPABASE_URL}/rest/v1/transactions`, { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
         body: JSON.stringify({ phone, amount, type, description: desc })
     });
@@ -142,7 +171,7 @@ async function addTransactionToCloud(phone, amount, type, desc) {
 
 async function loadTransactionsFromCloud(phone) {
     try {
-        const r = await fetch(`${SUPABASE_URL}/rest/v1/transactions?phone=eq.${encodeURIComponent(phone)}&order=created_at.desc&limit=50`, { signal: AbortSignal.timeout(10000) }, {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/transactions?phone=eq.${encodeURIComponent(phone)}&order=created_at.desc&limit=50`, { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
         return await r.json();
@@ -211,7 +240,7 @@ async function addPurchase(amount, category) {
     if (bonusEarned > 0) {
         alert(`+${bonusEarned} бонусов`);
         const msg = `🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n☕ *${categoryName}*\n💰 Сумма: ${amount}₽\n🎁 +${bonusEarned} бонусов\n📈 Всего: ${currentBonus}\n━━━━━━━━━━━━━━━━━━━━━━━`;
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { signal: AbortSignal.timeout(10000) }, {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
         }).catch(() => {});
@@ -488,7 +517,7 @@ function redeemAnyBonus() {
         renderCurrentTab();
         alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
         const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
-        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, {
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
         }).catch(() => {});
@@ -601,7 +630,7 @@ function redeemAnyBonus() {
         renderCurrentTab();
         alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
         const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
-        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, {
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
         }).catch(() => {});
@@ -712,7 +741,7 @@ function redeemAnyBonus() {
         renderCurrentTab();
         alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
         const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
-        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, {
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
         }).catch(() => {});
@@ -855,7 +884,7 @@ async function checkout() {
     
     // Telegram уведомление
     const msg = `🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n🛒 *Заказ оплачен*\n📦 Сумма: ${cartTotal}₽\n🎁 +${cartBonus} бонусов\n📈 Всего: ${currentBonus}\n━━━━━━━━━━━━━━━━━━━━━━━`;
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { signal: AbortSignal.timeout(10000) }, {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
@@ -1024,7 +1053,7 @@ function redeemAnyBonus() {
         renderCurrentTab();
         alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
         const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
-        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, {
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
         }).catch(() => {});
@@ -1050,7 +1079,7 @@ function redeemAnyBonus() {
         showToast(`✅ Списано ${amount} бонусов! Осталось: ${currentBonus}`);
         
         const msg = `🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: ${currentBonus}\n━━━━━━━━━━━━━━━━━━━━━━━`;
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { signal: AbortSignal.timeout(10000) }, {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
         }).catch(() => {});
@@ -1072,7 +1101,7 @@ function redeemAnyBonus() {
         renderCurrentTab();
         alert("✅ Списано ${amount} бонусов! Осталось: " + currentBonus);
         const msg = "🦒 *Tijgerbol*\n━━━━━━━━━━━━━━━━━━━━━━━\n💸 *Списание бонусов*\n🎁 Списано: ${amount}\n📈 Осталось: " + currentBonus + "\n━━━━━━━━━━━━━━━━━━━━━━━";
-        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, {
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", { signal: AbortSignal.timeout(10000) }, { signal: AbortSignal.timeout(10000) }, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
         }).catch(() => {});
