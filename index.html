@@ -376,6 +376,12 @@ function renderProfileTab() {
     let html = `
         <div class="container">
             <div class="card"><div class="avatar-large">${avatarHtml}</div><button onclick="uploadAvatar()" class="btn-outline" style="margin-top:8px;"><i class="fas fa-upload"></i> Загрузить фото</button><div class="text-center"><h2>${currentNickname}</h2><p class="text-muted">${currentPhone}</p></div></div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                <label class="theme-switch">
+                    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                    <span class="slider"></span>
+                </label>
+            </div>
             <div class="card text-center"><h3>Ваш QR-код</h3><div class="qr-code"><i class="fas fa-qrcode" style="font-size:64px; color:#B8860B;"></i><div style="font-size:12px;">${currentPhone}</div></div></div>
             <div class="card"><h3>Редактировать профиль</h3><input type="text" id="nickname-input" placeholder="Никнейм" value="${currentNickname}" class="phone-number"><div class="avatar-selector">${avatarsHtml}</div><button onclick="saveProfile()">Сохранить</button></div>
             <div class="card text-center"><button onclick="shareApp()" style="background:#B8860B;"><i class="fas fa-share-alt"></i> Поделиться приложением</button></div>
@@ -544,4 +550,129 @@ menuItems.forEach(item => {
         else window.showAmountPicker('other');
     };
 });
+</script>
+<style>
+    /* Тёмная тема — только визуал, логику не трогает */
+    body.dark-theme .overlay {
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(3px);
+    }
+    body.dark-theme .card {
+        background: rgba(25, 23, 21, 0.95);
+        color: #e8e8e8;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    body.dark-theme .balance-card {
+        background: linear-gradient(145deg, #141210, #1f1b18);
+    }
+    body.dark-theme .text-muted {
+        color: #aaa !important;
+    }
+    body.dark-theme .stat-row {
+        border-bottom-color: rgba(255,255,255,0.08);
+    }
+    body.dark-theme .history-item {
+        border-bottom-color: rgba(255,255,255,0.05);
+    }
+    body.dark-theme .menu-item {
+        background: #2a2724;
+        color: #e0e0e0;
+    }
+    body.dark-theme .menu-item:hover {
+        background: #3a3530;
+    }
+    body.dark-theme .avatar-option {
+        background: #3a3530;
+    }
+    body.dark-theme .avatar-option.selected {
+        background: #ae7d3c;
+        color: white;
+    }
+    body.dark-theme button.btn-outline {
+        border-color: #ae7d3c;
+        color: #ae7d3c;
+    }
+    body.dark-theme button.btn-outline:hover {
+        background: #ae7d3c;
+        color: white;
+    }
+    body.dark-theme .btn-secondary {
+        background: #3a3530;
+        color: #e0e0e0;
+    }
+    
+    /* Стиль для переключателя */
+    .theme-switch {
+        position: relative;
+        display: inline-block;
+        width: 52px;
+        height: 26px;
+        margin-left: 10px;
+    }
+    .theme-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 26px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "☀️";
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+    input:checked + .slider {
+        background-color: #ae7d3c;
+    }
+    input:checked + .slider:before {
+        content: "🌙";
+        transform: translateX(26px);
+    }
+</style>
+<script>
+// Тёмная тема — сохраняется в localStorage
+function initTheme() {
+    const savedTheme = localStorage.getItem('tijgerbol_theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        const toggle = document.getElementById('themeToggle');
+        if (toggle) toggle.checked = true;
+    }
+}
+
+function toggleTheme() {
+    if (document.body.classList.contains('dark-theme')) {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('tijgerbol_theme', 'light');
+    } else {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('tijgerbol_theme', 'dark');
+    }
+}
+
+// Запускаем после загрузки страницы
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTheme);
+} else {
+    initTheme();
+}
 </script>
