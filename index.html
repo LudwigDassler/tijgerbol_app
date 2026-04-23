@@ -10,9 +10,13 @@
     .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: 0.3s; border-radius: 24px; }
-    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
+    .slider:before {
+        line-height: 1;
+        text-align: center; position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
     input:checked + .slider { background-color: #ae7d3c; }
-    input:checked + .slider:before { transform: translateX(26px); }
+    input:checked + .slider:before {
+        line-height: 1;
+        text-align: center; transform: translateX(26px); }
 
     /* Тёмная тема */
     body.dark-theme .overlay { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); }
@@ -377,10 +381,13 @@ function renderProfileTab() {
         <div class="container">
             <div class="card"><div class="avatar-large">${avatarHtml}</div><button onclick="uploadAvatar()" class="btn-outline" style="margin-top:8px;"><i class="fas fa-upload"></i> Загрузить фото</button><div class="text-center"><h2>${currentNickname}</h2><p class="text-muted">${currentPhone}</p></div></div>
             <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
-                <label class="theme-switch">
-                    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
-                    <span class="slider"></span>
-                </label>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding: 8px 12px; background: rgba(0,0,0,0.03); border-radius: 40px;">
+                    <span style="font-size: 14px;"><i class="fas fa-moon"></i> Тёмная тема</span>
+                    <label class="theme-switch" style="margin:0;">
+                        <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
             <div class="card text-center"><h3>Ваш QR-код</h3><div class="qr-code"><i class="fas fa-qrcode" style="font-size:64px; color:#B8860B;"></i><div style="font-size:12px;">${currentPhone}</div></div></div>
             <div class="card"><h3>Редактировать профиль</h3><input type="text" id="nickname-input" placeholder="Никнейм" value="${currentNickname}" class="phone-number"><div class="avatar-selector">${avatarsHtml}</div><button onclick="saveProfile()">Сохранить</button></div>
@@ -603,6 +610,7 @@ menuItems.forEach(item => {
     
     /* Стиль для переключателя */
     .theme-switch {
+        vertical-align: middle;
         position: relative;
         display: inline-block;
         width: 52px;
@@ -626,6 +634,8 @@ menuItems.forEach(item => {
         border-radius: 26px;
     }
     .slider:before {
+        line-height: 1;
+        text-align: center;
         position: absolute;
         content: "☀️";
         height: 20px;
@@ -644,6 +654,8 @@ menuItems.forEach(item => {
         background-color: #ae7d3c;
     }
     input:checked + .slider:before {
+        line-height: 1;
+        text-align: center;
         content: "🌙";
         transform: translateX(26px);
     }
