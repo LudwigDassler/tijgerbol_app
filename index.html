@@ -419,6 +419,54 @@ function renderLoginScreen() {
 
 renderLoginScreen();
 document.getElementById('cartBtn').onclick = showCart;
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 
 <script>
@@ -440,6 +488,54 @@ function showToast(message, type) {
         toast.style.transform = 'translateX(-50%) scale(0.9)';
     }, 2000);
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 
 <script>
@@ -487,6 +583,54 @@ window.renderProfileTab = function() {
         }
     }, 50);
 };
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 
 <script>
@@ -506,6 +650,54 @@ if ('Notification' in window && 'serviceWorker' in navigator) {
         };
     }
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 
 <script>
@@ -567,12 +759,108 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderCurrentTab();
     }
 });
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
         </head><body>${qrDiv.outerHTML}</body></html>
     `);
     printWindow.print();
     printWindow.close();
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <script>
 // ФИКС: сохраняем и загружаем пользователя из localStorage
@@ -625,6 +913,54 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderCurrentTab();
     }
 });
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 </body>
 </html>
@@ -661,6 +997,54 @@ menuItems.forEach(item => {
         else window.showAmountPicker('other');
     };
 });
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <style>
     /* Тёмная тема — только визуал, логику не трогает */
@@ -791,6 +1175,54 @@ if (document.readyState === 'loading') {
 } else {
     initTheme();
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <style>
 .skeleton {
@@ -807,6 +1239,54 @@ if (document.readyState === 'loading') {
 .skeleton-avatar { width: 88px; height: 88px; border-radius: 50%; margin: 0 auto; }
 .skeleton-card { height: 100px; margin-bottom: 16px; }
 </style>
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 async function showBonusChart() {
@@ -838,6 +1318,54 @@ async function showBonusChart() {
         data: { labels, datasets: [{ label: 'Бонусы за день', data: values, borderColor: '#B8860B', tension: 0.3, fill: true, backgroundColor: 'rgba(184,134,11,0.1)' }] }
     });
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <script>
 const ACHIEVEMENTS = [
@@ -851,6 +1379,54 @@ function loadAchievements(transactions) {
     const earned = ACHIEVEMENTS.filter(a => a.condition(transactions));
     return earned;
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <script>
 function getVisitsCalendar(transactions) {
@@ -858,11 +1434,107 @@ function getVisitsCalendar(transactions) {
     transactions.forEach(t => days.add(t.created_at.slice(0,10)));
     return days.size;
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <script>
 function showAbout() {
     alert(`🦒 Tijgerbol v2.0\n\nРазработано для бонусной программы кофейни\n\n© 2026 Tijgerbol Team\n\nСвязь: @tijgerbol_bot`);
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <style>
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
@@ -901,6 +1573,54 @@ function showGallery() {
         setTimeout(() => galleryDiv.scrollIntoView({ behavior: 'smooth' }), 100);
     }
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <script>
 function exportToCSV() {
@@ -918,6 +1638,54 @@ function exportToCSV() {
     URL.revokeObjectURL(link.href);
     showToast('✅ Экспорт завершён', 'success');
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
 <script>
 const oldRenderForFeatures = window.renderProfileTab;
@@ -942,4 +1710,52 @@ function getRussianDays(n) {
     if ([2,3,4].includes(n % 10) && ![12,13,14].includes(n % 100)) return 'дня';
     return 'дней';
 }
+// ГАРАНТИРОВАННАЯ ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+async function ensureUserLoaded(phone) {
+    console.log("Загружаем пользователя для:", phone);
+    const userData = await loadUserFromCloud(phone);
+    if (userData) {
+        currentUser = { name: userData.name };
+        currentBonus = userData.bonus;
+        currentSpent = userData.spent;
+        currentNickname = userData.nickname || userData.name;
+        currentAvatar = userData.avatar || "fa-user";
+        currentPhoto = userData.photo || null;
+        console.log("Пользователь загружен:", currentNickname, currentBonus);
+        return true;
+    }
+    console.log("Пользователь не найден в Supabase");
+    return false;
+}
+
+// Переопределяем login с принудительной загрузкой
+const finalLogin = window.login;
+window.login = async function() {
+    await finalLogin();
+    if (currentPhone) {
+        await ensureUserLoaded(currentPhone);
+        renderCurrentTab();
+    }
+};
+
+// Восстановление после перезагрузки
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        const loaded = await ensureUserLoaded(currentPhone);
+        if (!loaded) {
+            currentNickname = savedUser.nickname || "Гость";
+            currentBonus = savedUser.bonus || 0;
+            currentSpent = savedUser.spent || 0;
+        }
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+
 </script>
