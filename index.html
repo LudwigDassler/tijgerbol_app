@@ -516,11 +516,115 @@ function printQR() {
     printWindow.document.write(`
         <html><head><title>Твой QR-код Tijgerbol</title>
         <style>body{display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;}</style>
+<script>
+// ФИКС: сохраняем и загружаем пользователя из localStorage
+function saveUserToLocal(user) {
+    localStorage.setItem("tijgerbol_current_user", JSON.stringify(user));
+}
+
+function loadUserFromLocal() {
+    const saved = localStorage.getItem("tijgerbol_current_user");
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch(e) { return null; }
+    }
+    return null;
+}
+
+// Сохраняем оригинальную функцию login
+const originalLogin = window.login;
+window.login = async function() {
+    await originalLogin();
+    const user = {
+        phone: currentPhone,
+        nickname: currentNickname,
+        bonus: currentBonus,
+        spent: currentSpent,
+        avatar: currentAvatar,
+        photo: currentPhoto
+    };
+    saveUserToLocal(user);
+};
+
+// При загрузке страницы проверяем сохранённого пользователя
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        currentNickname = savedUser.nickname;
+        currentBonus = savedUser.bonus;
+        currentSpent = savedUser.spent;
+        currentAvatar = savedUser.avatar;
+        currentPhoto = savedUser.photo;
+        
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
+</script>
         </head><body>${qrDiv.outerHTML}</body></html>
     `);
     printWindow.print();
     printWindow.close();
 }
+</script>
+<script>
+// ФИКС: сохраняем и загружаем пользователя из localStorage
+function saveUserToLocal(user) {
+    localStorage.setItem("tijgerbol_current_user", JSON.stringify(user));
+}
+
+function loadUserFromLocal() {
+    const saved = localStorage.getItem("tijgerbol_current_user");
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch(e) { return null; }
+    }
+    return null;
+}
+
+// Сохраняем оригинальную функцию login
+const originalLogin = window.login;
+window.login = async function() {
+    await originalLogin();
+    const user = {
+        phone: currentPhone,
+        nickname: currentNickname,
+        bonus: currentBonus,
+        spent: currentSpent,
+        avatar: currentAvatar,
+        photo: currentPhoto
+    };
+    saveUserToLocal(user);
+};
+
+// При загрузке страницы проверяем сохранённого пользователя
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUser = loadUserFromLocal();
+    if (savedUser && savedUser.phone && !currentPhone) {
+        currentPhone = savedUser.phone;
+        currentNickname = savedUser.nickname;
+        currentBonus = savedUser.bonus;
+        currentSpent = savedUser.spent;
+        currentAvatar = savedUser.avatar;
+        currentPhoto = savedUser.photo;
+        
+        const cloudTransactions = await loadTransactionsFromCloud(currentPhone);
+        transactions = cloudTransactions.map(t => ({ description: t.description, amount: t.amount, type: t.type, created_at: t.created_at }));
+        
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.remove("hidden");
+        document.getElementById("tabs").style.display = "flex";
+        renderCurrentTab();
+    }
+});
 </script>
 </body>
 </html>
